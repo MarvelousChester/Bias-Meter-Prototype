@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import uvicorn
 from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api.formatters import TextFormatter
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -21,7 +22,9 @@ def get_transcript(video_id: str):
     try:
         logger.info(f"API called with video_id: {video_id}")
         transcript = getYoutubeTranscript(video_id)
-        return JSONResponse(content={"transcript": transcript.to_raw_data()}, status_code=200)
+        formatter = TextFormatter()
+        formatted_transcript = formatter.format_transcript(transcript)
+        return JSONResponse(content={"transcript": formatted_transcript}, status_code=200)
     except Exception as e:
         logger.error(f"Error fetching transcript: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)

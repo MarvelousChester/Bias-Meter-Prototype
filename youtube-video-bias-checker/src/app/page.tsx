@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { fetchTranscript } from "./YoutubeHelper";
 import { extractVideoID } from "./YoutubeHelper";
+import { analyzeTranscript } from "./api/transcript/gemini";
 
 export default function Home() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -16,8 +17,14 @@ export default function Home() {
     } else {
       console.log("Extracted Video ID:", videoId);
       fetchTranscript(videoId)
-        .then((transcript) => {
+        .then(async (transcript) => {
           console.log("Transcript:", transcript);
+          const analysisResult = await analyzeTranscript(transcript);
+          console.log("Analysis Result:", analysisResult);
+          // Take the analysisResult and update the UI accordingly
+          // For Source Information, insert the analysis result
+          // For Left Block, insert placeholder text for now, this will be the bias analysis result
+          // i.e. Left Leaning or Right Leaning
         })
         .catch((error) => {
           console.error("Error fetching transcript:", error);
