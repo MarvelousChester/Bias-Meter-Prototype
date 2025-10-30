@@ -17,7 +17,7 @@ export async function analyzeTranscript(transcript: string) {
     const prompt: string =
       `Determine the political Bias from the transcript. Act as a neutral investigator and provide unbiased analysis. 
       Analyze the transcript for any signs of political bias, including language use, framing of issues, and representation of different perspectives.
-      Provide specific examples from the transcript to support your findings. Conclude with a summary of the overall bias detected, if any.
+      Provide specific examples from the transcript to support your findings. Conclude with a summary of the overall bias detected and on first line indicate keyword bias such as left, far-left, middle, right, far-right, if any.
       ` + `Transcript: ${transcript}`;
 
     // You can also type the contents array if it's more complex

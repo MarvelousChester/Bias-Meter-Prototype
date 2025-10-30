@@ -4,11 +4,12 @@ import { useState } from "react";
 import { fetchTranscript } from "./YoutubeHelper";
 import { extractVideoID } from "./YoutubeHelper";
 import { analyzeTranscript } from "./api/transcript/gemini";
+import Markdown from "react-markdown";
 
 export default function Home() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [url, setUrl] = useState("");
-
+  const [markdown, setMarkdown] = useState("");
   const handleSubmit = () => {
     const videoId = extractVideoID(url);
     if (!videoId) {
@@ -21,6 +22,7 @@ export default function Home() {
           console.log("Transcript:", transcript);
           const analysisResult = await analyzeTranscript(transcript);
           console.log("Analysis Result:", analysisResult);
+          setMarkdown(analysisResult || "Failed to get analysis.");
           // Take the analysisResult and update the UI accordingly
           // For Source Information, insert the analysis result
           // For Left Block, insert placeholder text for now, this will be the bias analysis result
@@ -83,9 +85,14 @@ export default function Home() {
                 <h2 className="text-lg font-semibold mb-2">
                   Block 2: Source Information
                 </h2>
-                <p className="text-sm opacity-70">
-                  Source information will appear here...
-                </p>
+                <div className="text-sm opacity-70 prose max-w-full">
+                  {markdown ? (
+                    // react-markdown component will render the markdown safely
+                    <Markdown>{markdown}</Markdown>
+                  ) : (
+                    <p>Source information will appear here...</p>
+                  )}
+                </div>
               </div>
             </div>
           )}
