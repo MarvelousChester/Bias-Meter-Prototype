@@ -25,3 +25,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Move DaisyUI collapse arrow to the right when using .collapse-arrow-right */
+.collapse.collapse-arrow-right .collapse-title {
+  /* ensure space on the right for the arrow */
+  padding-right: 2.5rem;
+}
+.collapse.collapse-arrow-right .collapse-title::after {
+  left: auto;
+  right: 0.75rem;
+}

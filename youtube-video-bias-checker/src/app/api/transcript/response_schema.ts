@@ -1,6 +1,17 @@
 import { Type } from "@google/genai";
 
-const politicalAnalysisSchema = {
+export interface politicalAnalysisProp {
+  political_leaning:
+    | "Extreme Left"
+    | "Left"
+    | "Center"
+    | "Right"
+    | "Extreme Right";
+  political_philosophies: string[];
+  summary_and_analysis: string;
+}
+
+export const politicalAnalysisSchema = {
   type: Type.OBJECT,
   properties: {
     political_leaning: {
