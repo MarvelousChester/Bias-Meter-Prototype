@@ -10,28 +10,31 @@ export default function Home() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [url, setUrl] = useState("");
   const [markdown, setMarkdown] = useState("");
-  const handleSubmit = () => {
-    const videoId = extractVideoID(url);
-    if (!videoId) {
-      alert("Please enter a valid YouTube URL.");
-      return;
-    } else {
-      console.log("Extracted Video ID:", videoId);
-      fetchTranscript(videoId)
-        .then(async (transcript) => {
-          console.log("Transcript:", transcript);
-          const analysisResult = await analyzeTranscript(transcript);
-          console.log("Analysis Result:", analysisResult);
-          setMarkdown(analysisResult || "Failed to get analysis.");
-          // Take the analysisResult and update the UI accordingly
-          // For Source Information, insert the analysis result
-          // For Left Block, insert placeholder text for now, this will be the bias analysis result
-          // i.e. Left Leaning or Right Leaning
-        })
-        .catch((error) => {
-          console.error("Error fetching transcript:", error);
-        });
-    }
+  const handleSubmit = async () => {
+    const analysisResult = await analyzeTranscript();
+    console.log("Analysis Result:", analysisResult);
+
+    // const videoId = extractVideoID(url);
+    // if (!videoId) {
+    //   alert("Please enter a valid YouTube URL.");
+    //   return;
+    // } else {
+    //   console.log("Extracted Video ID:", videoId);
+    //   fetchTranscript(videoId)
+    //     .then(async (transcript) => {
+    //       console.log("Transcript:", transcript);
+    //       const analysisResult = await analyzeTranscript(transcript);
+    //       console.log("Analysis Result:", analysisResult);
+    //       setMarkdown(analysisResult || "Failed to get analysis.");
+    //       // Take the analysisResult and update the UI accordingly
+    //       // For Source Information, insert the analysis result
+    //       // For Left Block, insert placeholder text for now, this will be the bias analysis result
+    //       // i.e. Left Leaning or Right Leaning
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error fetching transcript:", error);
+    //     });
+    // }
 
     setIsSubmitted(true);
   };
