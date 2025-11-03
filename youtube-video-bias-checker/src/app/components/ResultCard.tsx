@@ -6,9 +6,17 @@ import { politicalAnalysisProp } from "../api/transcript/response_schema";
 
 export function ResultCard() {
   return (
-    <div className="card w-96 bg-base-100 card-md shadow-sm">
+    <div className="card w-96 bg-base-400 glass card-md shadow-sm">
       <div className="card-body">
         <h2 className="card-title">Bias Detection</h2>
+        <div className="flex flex-wrap gap-2">
+          {sampleObject.political_philosophies.map((philosophy, index) => (
+            <div key={index} className="badge badge-soft badge-primary">
+              {philosophy}
+            </div>
+          ))}
+        </div>
+
         <div className="collapse collapse-arrow collapse-arrow-right">
           <input type="checkbox" />
           <div className="collapse-title font-semibold">
