@@ -1,18 +1,19 @@
 import type { NextConfig } from "next";
 
-module.exports = {
+const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
+        source: "/api/python/definition/:encoded_keyword",
+        destination:
+          "http://127.0.0.1:5328/api/python/definition/:encoded_keyword",
+      },
+      {
         source: "/api/python/:video_id",
-        destination: "http://127.0.0.1:5328/api/python/:video_id", // Proxy to FastAPI
+        destination: "http://127.0.0.1:5328/api/python/:video_id",
       },
     ];
   },
-};
-
-const nextConfig: NextConfig = {
-  /* config options here */
 };
 
 export default nextConfig;

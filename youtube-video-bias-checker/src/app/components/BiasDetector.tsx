@@ -17,6 +17,7 @@ export default function BiasDetector() {
     //   alert("Please enter a valid YouTube URL.");
     //   return;
     // }
+
     await analyzeTranscript().then((analysisResult) => {
       console.log("Analysis Result:", analysisResult);
     });

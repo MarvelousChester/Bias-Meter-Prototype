@@ -8,6 +8,7 @@ export function extractVideoID(url: string): string | null {
 }
 
 // Call FastAPI get_transcript endpoint
+//TODO: Encode the videoId to be URL safe and decode in FastAPI
 export async function fetchTranscript(videoId: string): Promise<string> {
   const response = await fetch(`/api/python/${videoId}`);
   if (!response.ok) {
