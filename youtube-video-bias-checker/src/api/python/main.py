@@ -23,7 +23,8 @@ def get_ebsco_definition(keyword: str) -> dict:
     url_templates = [
         "https://www.ebsco.com/research-starters/diplomacy-and-international-relations/{keyword}",
         "https://www.ebsco.com/research-starters/political-science/{keyword}",
-        "https://www.ebsco.com/research-starters/history/{keyword}"
+        "https://www.ebsco.com/research-starters/history/{keyword}",
+        "https://www.ebsco.com/research-starters/psychology/{keyword}"
     ]
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -36,13 +37,15 @@ def get_ebsco_definition(keyword: str) -> dict:
                 logger.info(f"Skipping {url} (Status: {response.status_code})")
                 continue
             soup = BeautifulSoup(response.text, 'html.parser')
-            overview_h2 = soup.find('h2', id='overview')
-            if overview_h2:
-                next_el = overview_h2.next_sibling
+            overview_h1 = soup.find('h1', id='research-starter-title')
+            if overview_h1:
+                next_el = overview_h1.next_sibling
                 while next_el and next_el.name is None:
                     next_el = next_el.next_sibling
-                if next_el and next_el.name == 'p':
-                    definition = next_el.get_text(strip=True)
+                if next_el and next_el.name == 'div':
+                    
+                    first_p = next_el.find('p')
+                    definition = first_p.get_text(strip=True)
                     if definition:
                         logger.info(f"SUCCESS: Definition found at {url}")
                         return {
@@ -64,7 +67,7 @@ def get_ebsco_definition(keyword: str) -> dict:
 
 @app.get("/api/python/definition/{encoded_keyword}")
 def definition(encoded_keyword: str):
-    keyword = urllib.parse.unquote(encoded_keyword)
+    keyword = (urllib.parse.unquote(encoded_keyword)).lower()
     return get_ebsco_definition(keyword)
 
 # --- YouTube Transcript Code ---
