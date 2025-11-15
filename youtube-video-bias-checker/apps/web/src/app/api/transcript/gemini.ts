@@ -6,7 +6,7 @@ import {
   Content,
   Tool,
 } from "@google/genai";
-import politicalAnalysisSchema from "./response_schema";
+import politicalAnalysisSchema from "@shared/response_schema";
 
 // NOTE: Your API key should be securely managed,
 // potentially via environment variables.

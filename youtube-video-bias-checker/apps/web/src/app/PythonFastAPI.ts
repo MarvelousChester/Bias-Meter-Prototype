@@ -9,9 +9,15 @@ export type EbscoDefinition = {
  * Calls: GET /api/python/definition/{keyword}
  * Returns an object with Term, Definition and Link.
  */
+//TODO: Use database caching to avoid repeated calls for same keyword
 export async function fetchDefinition(
   keyword: string
 ): Promise<EbscoDefinition> {
+  // Fetch definition from database
+
+  // If Definition not found
+  // Fetch definition from EBSCO API
+
   const encoded_keyword = encodeURIComponent(keyword);
 
   const res = await fetch(`/api/python/definition/${encoded_keyword}`);
@@ -23,5 +29,6 @@ export async function fetchDefinition(
   if (!json || typeof json.Definition !== "string") {
     throw new Error("Unexpected response shape from definition endpoint");
   }
+  // save the fetched definition to the database here for caching
   return json as EbscoDefinition;
 }
