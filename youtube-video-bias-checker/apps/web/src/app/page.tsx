@@ -1,7 +1,7 @@
 "use client";
 import BiasDetector from "./components/BiasDetector";
 import { ResultCard } from "./components/ResultCard";
-import { fetchDefinition } from "./PythonFastAPI";
+import { fetchDefinition } from "./politicalTermService";
 
 export default function Home() {
   fetchDefinition("Collectivism")

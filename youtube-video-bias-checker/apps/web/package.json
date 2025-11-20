@@ -12,6 +12,7 @@
     "@google-cloud/local-auth": "^3.0.1",
     "@google/genai": "^1.27.0",
     "@googleapis/youtube": "^29.0.0",
+    "@supabase/supabase-js": "^2.81.1",
     "googleapis": "^161.0.0",
     "next": "15.5.4",
     "react": "19.1.0",
