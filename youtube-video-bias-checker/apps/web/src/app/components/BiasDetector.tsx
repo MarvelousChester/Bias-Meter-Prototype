@@ -12,31 +12,32 @@ export default function BiasDetector() {
   const [markdown, setMarkdown] = useState("");
 
   const handleSubmit = async () => {
-    // const videoId = extractVideoID(url);
-    // if (!videoId) {
-    //   alert("Please enter a valid YouTube URL.");
-    //   return;
-    // }
+    const videoId = extractVideoID(url);
+    if (!videoId) {
+      alert("Please enter a valid YouTube URL.");
+      return;
+    }
 
     await analyzeTranscript().then((analysisResult) => {
       console.log("Analysis Result:", analysisResult);
     });
-    // fetchTranscript(videoId)
-    //   .then(async (transcript) => {
-    //     console.log("Transcript:", transcript);
-    //     const analysisResult = await analyzeTranscript(transcript);
-    //     console.log("Analysis Result:", analysisResult);
-    //     const text =
-    //       typeof analysisResult === "string"
-    //         ? analysisResult
-    //         : JSON.stringify(analysisResult, null, 2);
-    //     setMarkdown(text || "Failed to get analysis.");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error fetching transcript:", error);
-    //   });
 
-    // setIsSubmitted(true);
+    fetchTranscript(videoId)
+      .then(async (transcript) => {
+        console.log("Transcript:", transcript);
+        const analysisResult = await analyzeTranscript(transcript);
+        console.log("Analysis Result:", analysisResult);
+        const text =
+          typeof analysisResult === "string"
+            ? analysisResult
+            : JSON.stringify(analysisResult, null, 2);
+        setMarkdown(text || "Failed to get analysis.");
+      })
+      .catch((error) => {
+        console.error("Error fetching transcript:", error);
+      });
+
+    setIsSubmitted(true);
   };
 
   return (

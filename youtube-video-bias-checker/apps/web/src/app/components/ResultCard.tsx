@@ -2,7 +2,7 @@
 
 import React from "react";
 import Markdown from "react-markdown";
-import { politicalAnalysisProp } from "../api/transcript/response_schema";
+import { politicalAnalysisProp } from "../api/transcript/";
 
 export function ResultCard() {
   return (
