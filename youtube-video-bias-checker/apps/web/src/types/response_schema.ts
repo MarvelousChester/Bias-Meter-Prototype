@@ -2,11 +2,11 @@ import { Type } from "@google/genai";
 
 export interface politicalAnalysisProp {
   political_leaning:
-    | "Extreme Left"
-    | "Left"
-    | "Center"
-    | "Right"
-    | "Extreme Right";
+  | "left"
+  | "left-leaning"
+  | "center"
+  | "right-leaning"
+  | "right";
   political_philosophies: string[];
   summary_and_analysis: string;
 }
@@ -18,7 +18,7 @@ export const politicalAnalysisSchema = {
       type: Type.STRING,
       description:
         "The definitive political classification, selected from one of five specific options.",
-      enum: ["Extreme Left", "Left", "Center", "Right", "Extreme Right"],
+      enum: ["left", "left-leaning", "center", "right-leaning", "right"],
     },
     political_philosophies: {
       type: Type.ARRAY,
