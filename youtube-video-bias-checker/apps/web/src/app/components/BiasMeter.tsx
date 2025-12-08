@@ -1,12 +1,22 @@
 import React from 'react';
 
 interface BiasMeterProps {
-  score: number; // 0 to 100
+  bias: 'left' | 'left-leaning' | 'center' | 'right-leaning' | 'right';
 }
 
-const BiasMeter: React.FC<BiasMeterProps> = ({ score }) => {
-  // Clamp score between 0 and 100
-  const clampedScore = Math.max(0, Math.min(100, score));
+const BiasMeter: React.FC<BiasMeterProps> = ({ bias }) => {
+  const getPosition = (bias: string) => {
+    switch (bias) {
+      case 'left': return '10%';
+      case 'left-leaning': return '30%';
+      case 'center': return '50%';
+      case 'right-leaning': return '70%';
+      case 'right': return '90%';
+      default: return '50%';
+    }
+  };
+
+  const position = getPosition(bias);
 
   return (
     <div className="flex flex-col gap-1 w-full">
@@ -28,7 +38,7 @@ const BiasMeter: React.FC<BiasMeterProps> = ({ score }) => {
         <div
           className="absolute top-0.5 h-4 w-4 transition-all duration-500 ease-out"
           style={{
-            left: `calc(${clampedScore}% - 8px)` // -8px is half the width of the marker
+            left: `calc(${position} - 8px)` // -8px is half the width of the marker
           }}
         >
           <div className="h-full w-full rotate-45 transform bg-text-primary shadow-sm border border-white/20"></div>

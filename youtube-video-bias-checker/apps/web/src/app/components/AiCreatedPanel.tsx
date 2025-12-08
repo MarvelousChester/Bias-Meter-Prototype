@@ -39,7 +39,7 @@ const BiasPanel = () => {
 
             {/* Meter Component */}
             <div className="mb-6">
-                <BiasMeter score={20} />
+                <BiasMeter bias="left-leaning" />
             </div>
 
             {/* Signals */}
