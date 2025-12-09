@@ -60,18 +60,8 @@ export default function BiasDetector() {
         <h3 className="text-text-primary text-xl font-bold leading-tight">
           BiasMate
         </h3>
-
-        {/* when submitted, show BiasResultPanel */}
-        {isSubmitted && analysis && (
-          <BiasResultPanel
-            analysis={analysis}
-            isLoading={isLoading}
-            onReanalyze={handleSubmit}
-          />
-        )}
-
       </div>
-      {/* Actions - Only show if NOT submitted to avoid duplication. */}
+      {/* Actions */}
       {!isSubmitted && (
         <AnalysisActions
           isLoading={isLoading}
