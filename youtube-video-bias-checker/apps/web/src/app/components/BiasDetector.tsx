@@ -60,16 +60,19 @@ export default function BiasDetector() {
         <h3 className="text-text-primary text-xl font-bold leading-tight">
           BiasMate
         </h3>
+        {!isSubmitted && (
+          <p className="text-text-secondary text-sm font-normal">
+            Check this video's political leanings and framing
+          </p>
+        )}
       </div>
       {/* Actions */}
-      {!isSubmitted && (
-        <AnalysisActions
-          isLoading={isLoading}
-          onAnalyze={handleSubmit}
-          loadingText="Analyzing..."
-          buttonText="Analyze"
-        />
-      )}
+      <AnalysisActions
+        isLoading={isLoading}
+        onAnalyze={handleSubmit}
+        loadingText="Analyzing..."
+        buttonText="Analyze"
+      />
     </div>
   )
 }
