@@ -4,6 +4,7 @@ import { ChevronDown } from 'lucide-react';
 import BiasMeter from './BiasMeter';
 import { politicalAnalysisProp } from '../../types/response_schema';
 import AnalysisActions from './AnalysisActions';
+import Markdown from 'react-markdown';
 
 interface BiasResultPanelProps {
     analysis: politicalAnalysisProp;
@@ -71,9 +72,9 @@ const BiasResultPanel: React.FC<BiasResultPanelProps> = ({ analysis, isLoading, 
                         className={`grid transition-[grid-template-rows] duration-300 ease-out ${isReasoningOpen ? 'grid-rows-[1fr] opacity-100 pb-2' : 'grid-rows-[0fr] opacity-0'}`}
                     >
                         <div className="overflow-hidden">
-                            <p className="text-text-secondary text-sm font-normal leading-relaxed">
-                                {analysis.summary_and_analysis}
-                            </p>
+                            <div className="text-text-secondary text-sm font-normal leading-relaxed prose prose-sm max-w-none">
+                                <Markdown>{analysis.summary_and_analysis}</Markdown>
+                            </div>
                         </div>
                     </div>
                 </div>
