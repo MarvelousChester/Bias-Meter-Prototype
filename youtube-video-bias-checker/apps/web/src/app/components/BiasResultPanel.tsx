@@ -1,16 +1,17 @@
 "use client";
 import React, { useState } from 'react';
-import { ChevronDown, RefreshCw } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import BiasMeter from './BiasMeter';
 import { politicalAnalysisProp } from '../../types/response_schema';
+import AnalysisActions from './AnalysisActions';
 
-interface BiasPanelProps {
+interface BiasResultPanelProps {
     analysis: politicalAnalysisProp;
     isLoading?: boolean;
     onReanalyze: () => void;
 }
 
-const BiasPanel: React.FC<BiasPanelProps> = ({ analysis, isLoading, onReanalyze }) => {
+const BiasResultPanel: React.FC<BiasResultPanelProps> = ({ analysis, isLoading, onReanalyze }) => {
     const [isReasoningOpen, setIsReasoningOpen] = useState(false);
     const biasValue = analysis.political_leaning;
 
@@ -79,25 +80,13 @@ const BiasPanel: React.FC<BiasPanelProps> = ({ analysis, isLoading, onReanalyze 
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col gap-3 pt-4 border-t border-border-muted">
-                <button
-                    onClick={onReanalyze}
-                    disabled={isLoading}
-                    className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-text-primary text-white text-sm font-semibold shadow-sm hover:bg-black active:scale-[0.98] transition-all disabled:opacity-70 disabled:active:scale-100"
-                >
-                    <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                    {isLoading ? 'Analyzing...' : 'Re-analyze'}
-                </button>
-                <a
-                    href="#"
-                    className="text-center text-text-secondary text-sm font-normal underline hover:text-text-primary transition-colors"
-                >
-                    Learn what this means
-                </a>
-            </div>
+            <AnalysisActions
+                isLoading={isLoading || false}
+                onAnalyze={onReanalyze}
+            />
 
         </div>
     );
 };
 
-export default BiasPanel;
+export default BiasResultPanel;

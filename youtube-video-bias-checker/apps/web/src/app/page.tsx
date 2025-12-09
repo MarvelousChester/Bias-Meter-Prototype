@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
-import AiCreatedPanel from "./components/AiCreatedPanel";
+import BiasResultPanel from "./components/BiasResultPanel";
 import { politicalAnalysisProp } from "../types/response_schema";
+import BiasDetector from "./components/BiasDetector";
 
 export default function Home() {
   const [analysis] = useState<politicalAnalysisProp>({
@@ -17,10 +18,7 @@ export default function Home() {
 
   return (
     <div className="">
-      <AiCreatedPanel
-        analysis={analysis}
-        onReanalyze={() => console.log("Reanalyze")}
-      />
+      <BiasDetector />
     </div>
   );
 }
