@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-import daisyui from "daisyui";
 
 const config = {
   content: [
@@ -7,9 +6,27 @@ const config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  plugins: [daisyui],
-  daisyui: {
-    themes: ["light"],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
+      colors: {
+        "bias-left": "#5A8DAA",
+        "bias-left-leaning": "#9FB7C6",
+        "bias-center": "#A9A9A9",
+        "bias-right-leaning": "#D9BDBD",
+        "bias-right": "#C46D6D",
+        "bg-light": "#F9F9F7",
+        "bg-dark": "#101622",
+        "text-primary": "#212121",
+        "text-secondary": "#6F6F6F",
+        "border-muted": "#E5E5E2",
+      },
+      animation: {
+        'spin-slow': 'spin 2s linear infinite',
+      }
+    },
   },
 };
 

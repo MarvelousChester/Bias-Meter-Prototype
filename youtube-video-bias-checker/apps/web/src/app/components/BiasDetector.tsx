@@ -5,109 +5,74 @@ import { fetchTranscript } from "../YoutubeHelper";
 import { extractVideoID } from "../YoutubeHelper";
 import Markdown from "react-markdown";
 import { analyzeTranscript } from "../api/transcript/gemini";
+import AnalysisActions from "./AnalysisActions";
+import BiasResultPanel from "./BiasResultPanel";
 
 export default function BiasDetector() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState("");
   const [markdown, setMarkdown] = useState("");
+  const [analysis, setAnalysis] = useState<any>(null); // Using any temporarily to avoid import loops or precise typing if not imported, but preferably import types.
 
   const handleSubmit = async () => {
-    const videoId = extractVideoID(url);
-    if (!videoId) {
-      alert("Please enter a valid YouTube URL.");
-      return;
-    }
+    setIsLoading(true);
+    try {
+      const videoId = extractVideoID(url);
+      if (!videoId) {
+        alert("Please enter a valid YouTube URL.");
+        return;
+      }
+      const transcript = await fetchTranscript(videoId);
+      console.log("Transcript:", transcript);
 
-    await analyzeTranscript().then((analysisResult) => {
+      const analysisResult = await analyzeTranscript(transcript);
       console.log("Analysis Result:", analysisResult);
-    });
 
-    fetchTranscript(videoId)
-      .then(async (transcript) => {
-        console.log("Transcript:", transcript);
-        const analysisResult = await analyzeTranscript(transcript);
-        console.log("Analysis Result:", analysisResult);
-        const text =
-          typeof analysisResult === "string"
-            ? analysisResult
-            : JSON.stringify(analysisResult, null, 2);
-        setMarkdown(text || "Failed to get analysis.");
-      })
-      .catch((error) => {
-        console.error("Error fetching transcript:", error);
-      });
+      const text =
+        typeof analysisResult === "string"
+          ? analysisResult
+          : JSON.stringify(analysisResult, null, 2);
 
-    setIsSubmitted(true);
+      setMarkdown(text || "Failed to get analysis.");
+
+      if (typeof analysisResult !== 'string') {
+        setAnalysis(analysisResult);
+        setIsSubmitted(true);
+      } else {
+        console.warn("Analysis returned string, expected object:", analysisResult);
+        alert("Analysis did not return structured data. Please try again.");
+      }
+
+    } catch (error) {
+      console.error("Error during analysis:", error);
+      setMarkdown("Error occurred during analysis.");
+      alert("An error occurred during analysis.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="w-full bg-bg-light p-5 pb-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-t-2xl border-t border-border-muted flex flex-col h-auto animate-in slide-in-from-bottom duration-500">
       {/* Header */}
-      <header>
-        <div className="navbar bg-base-100">
-          <div className="navbar-start">
-            <h1 className="text-xl font-bold">Bias Detector</h1>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-grow flex items-center justify-center p-4">
-        <div className="card w-full max-w-4xl bg-base-200 rounded-box p-8 md:p-12">
-          {!isSubmitted ? (
-            /* Initial State - URL Input */
-            <div className="flex flex-col items-center gap-4">
-              <input
-                type="text"
-                placeholder="Enter URL to analyze..."
-                className="input input-bordered rounded-full w-3/5"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-              />
-              <button className="btn btn-primary mt-4" onClick={handleSubmit}>
-                Find Bias
-              </button>
-            </div>
-          ) : (
-            /* Results State - Two Blocks Side by Side */
-            <div className="flex flex-row gap-4">
-              {/* Block 1 */}
-              <div className="flex-1 rounded-box border bg-base-100 p-6">
-                <h2 className="text-lg font-semibold mb-2">
-                  Block 1: Analysis Results
-                </h2>
-                <p className="text-sm opacity-70">
-                  Analysis results will appear here...
-                </p>
-              </div>
-
-              {/* Divider */}
-              <div className="divider divider-horizontal"></div>
-
-              {/* Block 2 */}
-              <div className="flex-1 rounded-box border bg-base-100 p-6">
-                <h2 className="text-lg font-semibold mb-2">
-                  Block 2: Source Information
-                </h2>
-                <div className="text-sm opacity-70 prose max-w-full">
-                  {markdown ? (
-                    <Markdown>{markdown}</Markdown>
-                  ) : (
-                    <p>Source information will appear here...</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="footer footer-center p-4 bg-base-100">
-        <div>
-          <p>Prototype</p>
-        </div>
-      </footer>
+      <div className="flex flex-col gap-1 mb-5">
+        <h3 className="text-text-primary text-xl font-bold leading-tight">
+          BiasMate
+        </h3>
+        {!isSubmitted && (
+          <p className="text-text-secondary text-sm font-normal">
+            Check this video's political leanings and framing
+          </p>
+        )}
+      </div>
+      {/* Actions */}
+      <AnalysisActions
+        isLoading={isLoading}
+        onAnalyze={handleSubmit}
+        loadingText="Analyzing..."
+        buttonText="Analyze"
+      />
     </div>
-  );
+  )
 }
