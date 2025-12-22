@@ -15,6 +15,7 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "@bias-mate/shared": "*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
