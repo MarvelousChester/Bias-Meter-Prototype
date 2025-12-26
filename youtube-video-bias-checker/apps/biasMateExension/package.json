@@ -17,7 +17,8 @@
   "dependencies": {
     "@bias-mate/shared": "*",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "youtube-transcript-plus": "^1.1.1"
   },
   "devDependencies": {
     "@types/react": "^19",
