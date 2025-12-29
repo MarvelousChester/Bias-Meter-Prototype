@@ -1,3 +1,4 @@
+// TODO: Can you use the same library as transcript to get the metadata
 import { extractVideoId } from '@bias-mate/shared';
 
 export interface VideoMetadata {

@@ -1,9 +1,9 @@
 import { extractVideoId } from '@bias-mate/shared';
-import { extractVideoMetadata } from '../utils/videoMetadata';
-import { getTranscript } from '../utils/transcript';
+import { extractVideoMetadata } from '../../utils/videoMetadata';
+import { getTranscript } from '../../utils/transcript';
 
 export default defineContentScript({
-  matches: ['*://*.youtube.com/*'],
+  matches: ['*://*.youtube.com/watch*'],
   main() {
     // Function to attempt extraction
     const logMetadata = async () => {
@@ -24,7 +24,6 @@ export default defineContentScript({
         console.log('Bias Mate: No video metadata found (yet).');
       }
     };
-
     // Run initially
     logMetadata();
 

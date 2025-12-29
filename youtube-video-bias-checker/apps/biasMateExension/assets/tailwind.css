@@ -1,0 +1,19 @@
+/* Global styles for extension */
+@import "tailwindcss";
+
+@theme {
+  --color-bias-left: #5A8DAA;
+  --color-bias-left-leaning: #9FB7C6;
+  --color-bias-center: #A9A9A9;
+  --color-bias-right-leaning: #D9BDBD;
+  --color-bias-right: #C46D6D;
+  --color-bg-light: #F9F9F7;
+  --color-bg-dark: #101622;
+  --color-text-primary: #212121;
+  --color-text-secondary: #6F6F6F;
+  --color-border-muted: #E5E5E2;
+  
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --animate-spin-slow: spin 2s linear infinite;
+}
