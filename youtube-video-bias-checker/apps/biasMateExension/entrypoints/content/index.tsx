@@ -21,7 +21,7 @@ const waitForAnchor = (anchorSelector: string) =>
     observer.observe(document.body, { childList: true, subtree: true });
   });
 export default defineContentScript({
-  matches: ["*://*/*"],
+  matches: ["*://*.youtube.com/watch*"],
   cssInjectionMode: "ui",
 
   async main(ctx) {
@@ -41,7 +41,9 @@ export default defineContentScript({
         container.append(wrapper);
 
         const root = ReactDOM.createRoot(wrapper);
-        root.render(<BiasMeter bias="center" />);
+        // Add Padding to Root Div using tailwind
+        wrapper.className = "pb-4";
+        root.render(<BiasDetector />);
         return { root, wrapper };
       },
       onRemove: (elements) => {

@@ -7,6 +7,7 @@ import Markdown from "react-markdown";
 import { analyzeTranscript } from "../api/transcript/gemini";
 import AnalysisActions from "./AnalysisActions";
 import BiasResultPanel from "./BiasResultPanel";
+import { getTranscript } from "../utils/transcript";
 
 export default function BiasDetector() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -23,7 +24,7 @@ export default function BiasDetector() {
         alert("Please enter a valid YouTube URL.");
         return;
       }
-      const transcript = await fetchTranscript(videoId);
+      const transcript = await getTranscript(videoId);
       console.log("Transcript:", transcript);
 
       const analysisResult = await analyzeTranscript(transcript);
@@ -36,14 +37,16 @@ export default function BiasDetector() {
 
       setMarkdown(text || "Failed to get analysis.");
 
-      if (typeof analysisResult !== 'string') {
+      if (typeof analysisResult !== "string") {
         setAnalysis(analysisResult);
         setIsSubmitted(true);
       } else {
-        console.warn("Analysis returned string, expected object:", analysisResult);
+        console.warn(
+          "Analysis returned string, expected object:",
+          analysisResult
+        );
         alert("Analysis did not return structured data. Please try again.");
       }
-
     } catch (error) {
       console.error("Error during analysis:", error);
       setMarkdown("Error occurred during analysis.");
@@ -74,5 +77,5 @@ export default function BiasDetector() {
         buttonText="Analyze"
       />
     </div>
-  )
+  );
 }

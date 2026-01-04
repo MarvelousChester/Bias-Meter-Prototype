@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { fetchTranscript, extractVideoID, analyzeTranscript } from "../utils/stubs";
+import {
+  fetchTranscript,
+  extractVideoID,
+  analyzeTranscript,
+} from "../utils/stubs";
 import Markdown from "react-markdown";
 import AnalysisActions from "./AnalysisActions";
 import BiasResultPanel from "./BiasResultPanel";
+import { getTranscript, TranscriptItem } from "../utils/transcript";
+import { extractVideoMetadata, VideoMetadata } from "../utils/videoMetadata";
 
 export default function BiasDetector() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -16,15 +22,22 @@ export default function BiasDetector() {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const videoId = extractVideoID(url);
-      if (!videoId) {
+      const videoMetadata: VideoMetadata | null = extractVideoMetadata();
+      if (!videoMetadata) {
         alert("Please enter a valid YouTube URL.");
         return;
       }
-      const transcript = await fetchTranscript(videoId);
+      const transcript: TranscriptItem[] | null = await getTranscript(
+        videoMetadata.videoId
+      );
+      if (!transcript) {
+        alert("No transcript available for this video.");
+        setIsLoading(false);
+        return;
+      }
       console.log("Transcript:", transcript);
 
-      const analysisResult = await analyzeTranscript(transcript);
+      const analysisResult = await analyzeTranscript(transcript.toString());
       console.log("Analysis Result:", analysisResult);
 
       const text =
@@ -34,14 +47,16 @@ export default function BiasDetector() {
 
       setMarkdown(text || "Failed to get analysis.");
 
-      if (typeof analysisResult !== 'string') {
+      if (typeof analysisResult !== "string") {
         setAnalysis(analysisResult);
         setIsSubmitted(true);
       } else {
-        console.warn("Analysis returned string, expected object:", analysisResult);
+        console.warn(
+          "Analysis returned string, expected object:",
+          analysisResult
+        );
         alert("Analysis did not return structured data. Please try again.");
       }
-
     } catch (error) {
       console.error("Error during analysis:", error);
       setMarkdown("Error occurred during analysis.");
@@ -50,9 +65,9 @@ export default function BiasDetector() {
       setIsLoading(false);
     }
   };
-
+  // TODO: Create Supabase function to make API Call
   return (
-    <div className="w-full bg-bg-light p-5 pb-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-t-2xl border-t border-border-muted flex flex-col h-auto animate-in slide-in-from-bottom duration-500">
+    <div className="w-full bg-bg-light p-5 pb-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-2xl border border-border-muted flex flex-col h-auto animate-in slide-in-from-bottom duration-500">
       {/* Header */}
       <div className="flex flex-col gap-1 mb-5">
         <h3 className="text-text-primary text-xl font-bold leading-tight">
@@ -72,5 +87,5 @@ export default function BiasDetector() {
         buttonText="Analyze"
       />
     </div>
-  )
+  );
 }
