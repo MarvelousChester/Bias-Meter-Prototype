@@ -1,10 +1,6 @@
 import { supabase } from "../lib/supabase";
-
-export type EbscoDefinition = {
-  Term: string;
-  Definition: string;
-  Link: string;
-};
+import { scrapeEbscoDefinition } from "./ebscoDefinition";
+import type { EbscoDefinition } from "@bias-mate/shared";
 
 /**
  * Fetch definition from database cache
@@ -42,34 +38,6 @@ async function getDefinitionFromCache(
 }
 
 /**
- * Fetch definition from the FastAPI endpoint
- * @param keyword - The political term to look up
- * @returns Definition from the API
- */
-async function fetchDefinitionFromAPI(
-  keyword: string
-): Promise<EbscoDefinition> {
-  const encoded_keyword = encodeURIComponent(keyword.trim());
-
-  const res = await fetch(`/api/python/definition/${encoded_keyword}`);
-  if (!res.ok) {
-    throw new Error("Failed to fetch definition");
-  }
-  const json = await res.json();
-
-  // Validate API response
-  if (
-    !json ||
-    typeof json.Definition !== "string" ||
-    json.Definition.trim() === ""
-  ) {
-    throw new Error("Unexpected response shape from definition endpoint");
-  }
-
-  return json as EbscoDefinition;
-}
-
-/**
  * Save definition to database cache
  * @param definition - The definition to cache
  */
@@ -99,7 +67,7 @@ async function cacheDefinition(definition: EbscoDefinition): Promise<void> {
 
 /**
  * Fetch definition with caching strategy
- * First checks database cache, then falls back to FastAPI if not found
+ * First checks database cache, then falls back to the HTML scraper if not found
  * @param keyword - The political term to look up
  * @returns Definition object with Term, Definition and Link
  */
@@ -112,11 +80,24 @@ export async function fetchDefinition(
     return cachedDefinition;
   }
 
-  // Fetch from API if not cached
-  const definition = await fetchDefinitionFromAPI(keyword);
+  try {
+    const definition = await scrapeEbscoDefinition(keyword);
 
-  // Cache the result for future requests
-  await cacheDefinition(definition);
+    if (
+      !definition ||
+      typeof definition.Definition !== "string" ||
+      definition.Definition.trim() === "" ||
+      typeof definition.Link !== "string"
+    ) {
+      throw new Error("Invalid response shape");
+    }
 
-  return definition;
+    // Cache the result for future requests
+    await cacheDefinition(definition);
+
+    return definition;
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : "Unknown error";
+    throw new Error(`Scraper Failed: ${reason}`);
+  }
 }
