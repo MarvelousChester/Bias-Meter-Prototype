@@ -16,12 +16,14 @@
   },
   "dependencies": {
     "@bias-mate/shared": "*",
+    "@supabase/supabase-js": "^2.89.0",
     "@tailwindcss/vite": "^4.1.18",
     "cheerio": "^1.1.2",
     "lucide-react": "^0.562.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-markdown": "^10.1.0",
+    "supabase": "^2.71.0",
     "tailwindcss": "^4.1.18",
     "youtube-transcript-plus": "^1.1.1"
   },
