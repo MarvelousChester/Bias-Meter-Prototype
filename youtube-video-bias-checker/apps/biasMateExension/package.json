@@ -12,7 +12,8 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
-    "postinstall": "wxt prepare"
+    "postinstall": "wxt prepare",
+    "update-types": "supabase gen types typescript --project-id hoebwxpowttokpofhhct > src/types/supabase.ts"
   },
   "dependencies": {
     "@bias-mate/shared": "*",

@@ -11,8 +11,10 @@ import AnalysisActions from "./AnalysisActions";
 import BiasResultPanel from "./BiasResultPanel";
 import { getTranscript, TranscriptItem } from "../utils/transcript";
 import { extractVideoMetadata, VideoMetadata } from "../utils/videoMetadata";
+import { useAuth } from "../lib/useAuth";
 
 export default function BiasDetector() {
+  const { isAuthenticated, loading: authLoading, user } = useAuth();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState("");
@@ -20,6 +22,12 @@ export default function BiasDetector() {
   const [analysis, setAnalysis] = useState<any>(null);
 
   const handleSubmit = async () => {
+    // Check authentication before proceeding
+    // if (!isAuthenticated) {
+    //   alert("Please log in via the extension popup (click the Bias Mate icon) to analyze videos.");
+    //   return;
+    // }
+
     setIsLoading(true);
     try {
       const videoMetadata: VideoMetadata | null = extractVideoMetadata();
@@ -65,7 +73,14 @@ export default function BiasDetector() {
       setIsLoading(false);
     }
   };
-  // TODO: Create Supabase function to make API Call
+
+  // Show auth status in header
+  const authStatusText = authLoading 
+    ? "Checking login..." 
+    : isAuthenticated 
+      ? `Logged in as ${user?.email}` 
+      : "Not logged in - click extension icon to sign in";
+
   return (
     <div className="w-full bg-bg-light p-5 pb-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-2xl border border-border-muted flex flex-col h-auto animate-in slide-in-from-bottom duration-500">
       {/* Header */}
@@ -78,13 +93,16 @@ export default function BiasDetector() {
             Check this video's political leanings and framing
           </p>
         )}
+        <p className="text-text-muted text-xs font-normal mt-1">
+          {authStatusText}
+        </p>
       </div>
       {/* Actions */}
       <AnalysisActions
-        isLoading={isLoading}
+        isLoading={isLoading || authLoading}
         onAnalyze={handleSubmit}
-        loadingText="Analyzing..."
-        buttonText="Analyze"
+        loadingText={authLoading ? "Checking auth..." : "Analyzing..."}
+        buttonText={isAuthenticated ? "Analyze" : "Sign in to Analyze"}
       />
     </div>
   );

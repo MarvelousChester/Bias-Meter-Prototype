@@ -20,10 +20,11 @@ body {
 .popup {
   padding: 1.5rem;
   text-align: center;
+  min-width: 280px;
 }
 
 .popup h1 {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 1rem 0;
   font-size: 1.5rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
@@ -31,8 +32,96 @@ body {
   background-clip: text;
 }
 
-.popup p {
+/* Auth Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.auth-form input {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.87);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.auth-form input:focus {
+  border-color: #667eea;
+}
+
+.auth-form input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.auth-form button,
+.user-info button {
+  padding: 0.625rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.auth-form button:hover:not(:disabled),
+.user-info button:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.auth-form button:disabled,
+.user-info button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.toggle-mode {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 0.75rem !important;
+  padding: 0.25rem !important;
+}
+
+.toggle-mode:hover:not(:disabled) {
+  color: rgba(255, 255, 255, 0.87) !important;
+}
+
+/* User Info */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.user-email {
   margin: 0;
   color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+}
+
+.email-text {
+  margin: 0 0 0.5rem 0;
+  color: rgba(255, 255, 255, 0.87);
   font-size: 0.875rem;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* Error Message */
+.error {
+  margin: 0;
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  color: #f87171;
+  font-size: 0.75rem;
 }

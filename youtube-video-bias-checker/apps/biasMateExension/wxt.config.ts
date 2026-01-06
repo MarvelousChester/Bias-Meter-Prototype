@@ -10,12 +10,6 @@ export default defineConfig({
     permissions: ["activeTab", "storage", "scripting"],
     host_permissions: ["*://*.youtube.com/*"],
   },
-  webExt: {
-    chromiumProfile: resolve(
-      "C:/Users/karan/Documents/GitHub/Bias-Meter-Prototype/youtube-video-bias-checker/apps/biasMateExension/chrome-data"
-    ),
-    keepProfileChanges: true,
-  },
   vite: () => ({
     plugins: [tailwindcss()],
   }),

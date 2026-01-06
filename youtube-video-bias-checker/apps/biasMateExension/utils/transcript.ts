@@ -1,6 +1,3 @@
-// TODO: Current Issue is that it seems to prevent the actual transcripts from loading
-//      Find another way to get the transcripts from the page later (AI Agent Ignore This)
-
 import { YoutubeTranscript } from 'youtube-transcript-plus';
 
 export interface TranscriptItem {
