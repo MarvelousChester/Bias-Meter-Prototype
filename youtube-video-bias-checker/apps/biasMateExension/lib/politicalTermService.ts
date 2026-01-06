@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabase";
+import { supabase } from "./supabase";
 import { scrapeEbscoDefinition } from "./ebscoDefinition";
 import type { EbscoDefinition } from "@bias-mate/shared";
 
