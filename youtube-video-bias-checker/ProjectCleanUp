@@ -15,3 +15,8 @@ The core of the project is completed, however, it can be improved, optimized, an
 - Adding on Hover effect on Keyword on the Key Signals Section to show Definition.
 - Making the Icon match the UI colour Scheme
 - Adding Quality of Life Improvements to the UI such as showing Errors to User like video not found to have transcripts, rate limit hit, etc. Explore for more options.
+
+Tasks should be prioritized by tasks that don't relate API and Youtube Transcript initially.
+
+- Refactor First before implementing anything new as well Unit Tests.
+- Collobarate with AI to figure out a plan on how to make this project better using principles you know from software development such security and SOLID principles as basic guidlines.
