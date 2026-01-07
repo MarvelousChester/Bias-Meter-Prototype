@@ -1,0 +1,17 @@
+# Project Clean Up
+
+Description: The project clean up is a list of tasks that need to be done to clean up the project.
+The core of the project is completed, however, it can be improved, optimized, and made more user-friendly.
+
+## Tasks
+
+- Adding OAuth as an option
+- Clean up Architecture of the project to make it more maintainable and scalable
+- Match the popup for extension to be similar to BiasMate Extension.
+- Adding Tests for the project
+- Insertion of Definitions into the Database to prevent uncessary scraping from Ebsco
+- Insertion of Video and Results into Database to prevent uncessary API Calls when vido has already been analyzed
+- Adding on Hover Effects to the UI
+- Adding on Hover effect on Keyword on the Key Signals Section to show Definition.
+- Making the Icon match the UI colour Scheme
+- Adding Quality of Life Improvements to the UI such as showing Errors to User like video not found to have transcripts, rate limit hit, etc. Explore for more options.
