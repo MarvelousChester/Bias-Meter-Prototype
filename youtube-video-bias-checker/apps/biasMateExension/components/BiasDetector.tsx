@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import {
-  fetchTranscript,
-  extractVideoID,
   analyzeTranscript,
 } from "../utils/analyzeTranscript";
 import Markdown from "react-markdown";
@@ -46,7 +44,7 @@ export default function BiasDetector() {
       // }
       console.log("Transcript:", transcript);
       // TODO: Enable After, to Prevent API Usage For Gemini
-      // const analysisResult = await analyzeTranscript(transcript.toString());
+      // const analysisResult: politicalAnalysisProp = await analyzeTranscript(transcript);
       // const analysisResult = await analyzeTranscript(transcript);
       const analysisResult = {
       "political_philosophies": [
