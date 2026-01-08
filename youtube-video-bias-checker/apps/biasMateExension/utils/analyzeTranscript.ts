@@ -1,15 +1,5 @@
 import { supabase } from "@/lib/supabase";
 
-export function extractVideoID(url: string): string | null {
-    console.log("Stub: Extracting video ID from", url);
-    return "mock-video-id";
-}
-
-export async function fetchTranscript(videoId: string): Promise<string> {
-    console.log("Stub: Fetching transcript for", videoId);
-    return "This is a mock transcript for testing purposes.";
-}
-
 export async function analyzeTranscript(transcript: string): Promise<any> {
     // Get the current session to include the auth token
     const { data: { session } } = await supabase.auth.getSession();

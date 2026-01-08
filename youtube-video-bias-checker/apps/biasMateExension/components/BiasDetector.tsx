@@ -5,7 +5,7 @@ import {
   fetchTranscript,
   extractVideoID,
   analyzeTranscript,
-} from "../utils/stubs";
+} from "../utils/analyzeTranscript";
 import Markdown from "react-markdown";
 import AnalysisActions from "./AnalysisActions";
 import BiasResultPanel from "./BiasResultPanel";

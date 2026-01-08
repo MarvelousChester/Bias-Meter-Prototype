@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
-import { analyzeTranscript } from "./stubs";
+import { analyzeTranscript } from "./analyzeTranscript";
 import { supabase } from "@/lib/supabase";
 
 // Mock Supabase
@@ -14,7 +14,7 @@ vi.mock("@/lib/supabase", () => ({
   },
 }));
 
-describe("stubs", () => {
+describe("analyzeTranscript", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
