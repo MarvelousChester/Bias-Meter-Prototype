@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
-import { politicalAnalysisProp } from "./types";
+import type { PoliticalAnalysis } from "@bias-mate/shared";
 
-export async function analyzeTranscript(transcript: string): Promise<politicalAnalysisProp> {
+export async function analyzeTranscript(transcript: string): Promise<PoliticalAnalysis> {
     // Get the current session to include the auth token
     const { data: { session } } = await supabase.auth.getSession();
     

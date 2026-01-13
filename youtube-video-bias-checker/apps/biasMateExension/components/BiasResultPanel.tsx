@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import BiasMeter from './BiasMeter';
-import { politicalAnalysisProp } from '../utils/types';
+import type { PoliticalAnalysis } from '@bias-mate/shared';
 import AnalysisActions from './AnalysisActions';
 import Markdown from 'react-markdown';
 
 interface BiasResultPanelProps {
-    analysis: politicalAnalysisProp;
+    analysis: PoliticalAnalysis;
     isLoading?: boolean;
     onReanalyze: () => void;
 }

@@ -1,12 +1,7 @@
 // TODO: Can you use the same library as transcript to get the metadata
-import { extractVideoId } from '@bias-mate/shared';
+import { extractVideoId, VideoMetadata } from '@bias-mate/shared';
 
-export interface VideoMetadata {
-  videoId: string;
-  title: string;
-  channelName: string;
-  uploadDate: string;
-}
+export type { VideoMetadata };
 
 /**
  * Helper to get text content from a selector

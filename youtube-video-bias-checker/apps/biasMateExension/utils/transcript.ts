@@ -1,10 +1,7 @@
 import { YoutubeTranscript } from 'youtube-transcript-plus';
+import type { TranscriptItem } from '@bias-mate/shared';
 
-export interface TranscriptItem {
-  text: string;
-  start: number;
-  duration: number;
-}
+export type { TranscriptItem };
 
 /**
  * Fetch and parse the transcript for a given YouTube video ID using youtube-transcript-plus
