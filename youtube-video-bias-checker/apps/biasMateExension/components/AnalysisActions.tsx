@@ -24,12 +24,13 @@ const AnalysisActions: React.FC<AnalysisActionsProps> = ({
                 <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
                 {isLoading ? loadingText : buttonText}
             </button>
-            <a
-                href="#"
-                className="text-center text-text-secondary text-sm font-normal underline hover:text-text-primary transition-colors"
+            <button
+                type="button"
+                className="text-center text-text-secondary text-sm font-normal underline hover:text-text-primary transition-colors bg-transparent border-none cursor-pointer"
+                onClick={() => window.open('https://biasmate.io/learn', '_blank')}
             >
                 Learn what this means
-            </a>
+            </button>
         </div>
     );
 };

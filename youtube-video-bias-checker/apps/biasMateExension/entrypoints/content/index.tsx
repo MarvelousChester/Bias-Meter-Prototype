@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-import BiasMeter from "../../components/BiasMeter";
+import BiasDetector from "../../components/BiasDetector";
 import "~/assets/tailwind.css";
 
 const waitForAnchor = (anchorSelector: string) =>

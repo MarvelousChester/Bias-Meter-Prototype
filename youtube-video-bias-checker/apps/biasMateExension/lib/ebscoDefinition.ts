@@ -39,7 +39,7 @@ async function fetchHtml(url: string): Promise<string> {
   }
 }
 
-function extractDefinition(html: string): string | null {
+export function extractDefinition(html: string): string | null {
   const $ = load(html);
   const heading = $("h1#research-starter-title").first();
   if (!heading.length) return null;
