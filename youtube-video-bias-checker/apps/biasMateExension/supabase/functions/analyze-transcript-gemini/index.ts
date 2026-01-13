@@ -2,13 +2,25 @@
 // https://supabase.com/docs/guides/functions/import-maps
 import { GoogleGenAI } from "npm:@google/genai";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { corsHeaders } from "./cors.ts";
+import { getCorsHeaders } from "./cors.ts";
 import { politicalAnalysisSchema } from "./responseSchema.ts";
 
 Deno.serve(async (req) => {
+  // Get origin for CORS
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   // 1. Handle CORS (Browser pre-flight requests)
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
+  }
+
+  // Check if origin is allowed (corsHeaders will be empty if denied)
+  if (Object.keys(corsHeaders).length === 0) {
+    return new Response(
+      JSON.stringify({ error: 'Origin not allowed' }),
+      { status: 403 }
+    );
   }
 
   try {

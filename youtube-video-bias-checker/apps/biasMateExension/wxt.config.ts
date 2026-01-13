@@ -9,6 +9,7 @@ export default defineConfig({
     version: "0.1.0",
     permissions: ["activeTab", "storage", "scripting"],
     host_permissions: ["*://*.youtube.com/*"],
+    key: "kplbdjphnamhlkmnpmalnalghigoafak",
   },
   vite: () => ({
     plugins: [tailwindcss()],

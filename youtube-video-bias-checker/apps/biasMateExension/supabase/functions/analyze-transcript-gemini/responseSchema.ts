@@ -1,14 +1,7 @@
 import { Type } from "npm:@google/genai";
-export interface politicalAnalysisProp {
-  political_leaning:
-  | "left"
-  | "left-leaning"
-  | "center"
-  | "right-leaning"
-  | "right";
-  political_philosophies: string[];
-  summary_and_analysis: string;
-}
+
+// Note: PoliticalAnalysis interface is defined in @bias-mate/shared
+// For Deno edge functions, we only need the schema object for Gemini API
 
 export const politicalAnalysisSchema = {
   type: Type.OBJECT,
@@ -17,7 +10,7 @@ export const politicalAnalysisSchema = {
       type: Type.STRING,
       description:
         "The definitive political classification, selected from one of five specific options.",
-      enum: ["left", "left-leaning", "center", "right-leaning", "right"],
+      enum: ["Left", "Left-leaning", "Center", "Right-leaning", "Right"],
     },
     political_philosophies: {
       type: Type.ARRAY,
