@@ -7,13 +7,13 @@ import BiasResultPanel from "./BiasResultPanel";
 import { getTranscript } from "../utils/transcript";
 import { extractVideoMetadata } from "../utils/videoMetadata";
 import { useAuth } from "../lib/useAuth";
-import type { PoliticalAnalysis } from "@bias-mate/shared";
+import type { AnalysisResponse } from "@bias-mate/shared";
 
 export default function BiasDetector() {
   const { isAuthenticated, loading: authLoading, user } = useAuth();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<PoliticalAnalysis | null>(null);
+  const [analysisResponse, setAnalysisResponse] = useState<AnalysisResponse | null>(null);
 
   const handleSubmit = async () => {
     // Check authentication before proceeding
@@ -42,10 +42,18 @@ export default function BiasDetector() {
       const transcriptText = transcript.map(item => item.text).join(" ");
       console.log("Transcript fetched, analyzing...");
       
-      const analysisResult = await analyzeTranscript(transcriptText);
-      console.log("Analysis Result:", analysisResult);
+      const result = await analyzeTranscript(transcriptText);
+      console.log("Analysis Result:", result);
 
-      setAnalysis(analysisResult);
+      setAnalysisResponse(result);
+      
+      // Handle non-political content
+      if (!result.is_political) {
+        alert(`This video doesn't appear to contain political content.\n\nReason: ${result.detection.reasoning}`);
+        setIsLoading(false);
+        return;
+      }
+      
       setIsSubmitted(true);
     } catch (error) {
       console.error("Error during analysis:", error);
@@ -62,10 +70,10 @@ export default function BiasDetector() {
       ? `Logged in as ${user?.email}` 
       : "Not logged in - click extension icon to sign in";
 
-  if (isSubmitted && analysis) {
+  if (isSubmitted && analysisResponse?.is_political && analysisResponse.analysis) {
     return (
       <BiasResultPanel
-        analysis={analysis}
+        analysis={analysisResponse.analysis}
         isLoading={isLoading}
         onReanalyze={handleSubmit}
       />

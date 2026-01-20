@@ -3,7 +3,30 @@
 import { GoogleGenAI } from "npm:@google/genai";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "./cors.ts";
-import { politicalAnalysisSchema } from "./responseSchema.ts";
+import { createModelConfig, politicalAnalysisConfig, politicalDetectionConfig } from "./promptConfig.ts";
+
+// Helper function to execute Gemini call and parse function response
+async function executeGeminiCall(
+  ai: InstanceType<typeof GoogleGenAI>,
+  modelId: string,
+  modelConfig: Record<string, unknown>,
+  prompt: string
+): Promise<{ success: boolean; data: Record<string, unknown> | null; error?: string }> {
+  const response = await ai.models.generateContent({
+    model: modelId,
+    contents: [{ parts: [{ text: prompt }] }],
+    config: modelConfig,
+  });
+
+  if (response.functionCalls && response.functionCalls.length > 0) {
+    const functionCall = response.functionCalls[0];
+    console.log(`Function called: ${functionCall.name}`);
+    return { success: true, data: functionCall.args as Record<string, unknown> };
+  } else {
+    console.log("No function call found.");
+    return { success: false, data: null, error: response.text };
+  }
+}
 
 Deno.serve(async (req) => {
   // Get origin for CORS
@@ -73,37 +96,18 @@ Deno.serve(async (req) => {
     }
 
     // 4. Initialize Gemini Client
-    // Note: Deno.env.get is used instead of process.env
     const apiKey = Deno.env.get('GEN_AI_API_KEY');
     if (!apiKey) {
       throw new Error("GEN_AI_API_KEY is not set");
     }
 
     const ai = new GoogleGenAI({ apiKey });
-    
-    // Ensure this model name is correct. Common ones are 'gemini-1.5-pro' or 'gemini-1.5-flash'.
-    // If you have access to a 2.5 preview, keep it.
-    const modelId = "gemini-2.5-pro"; 
 
-    const systemInstruction =
-      "You are a neutral, objective political analyst. Your sole task is to analyze the provided transcript for political bias and underlying ideology.";
-
-    const analysisTool = {
-      functionDeclarations: [
-        {
-          name: "record_political_analysis",
-          description: "Records the political bias analysis of a given transcript.",
-          parameters: politicalAnalysisSchema,
-        },
-      ],
-    };
-
-    const modelConfig = {
-      systemInstruction: systemInstruction,
-      tools: [analysisTool],
-    };
-
-    const prompt = `Please analyze the following transcript and report your findings using the 'record_political_analysis' tool.
+    // =========================================================================
+    // STEP 1: Political Detection (Guard Rail)
+    // =========================================================================
+    const detectionConfig = createModelConfig(politicalDetectionConfig);
+    const detectionPrompt = `Please analyze the following transcript and determine if it contains political content using the 'record_political_detection' tool.
 
     Transcript:
     ---
@@ -111,28 +115,81 @@ Deno.serve(async (req) => {
     ---
     `;
 
-    // 4. Execute the call
-    // Note: The new SDK syntax might differ slightly depending on version. 
-    // This follows the pattern from your snippet.
-    const response = await ai.models.generateContent({
-      model: modelId,
-      contents: [{ parts: [{ text: prompt }] }],
-      config: modelConfig,
-    });
+    console.log("Step 1: Running political detection...");
+    const detectionResult = await executeGeminiCall(
+      ai,
+      detectionConfig.modelId,
+      detectionConfig.config,
+      detectionPrompt
+    );
 
-    // 5. Parse findings
-    let resultData = null;
+    if (!detectionResult.success || !detectionResult.data) {
+      return new Response(
+        JSON.stringify({ 
+          error: "Political detection failed", 
+          details: detectionResult.error 
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      );
+    }
 
-    // Check for function calls in the response
-    // The structure depends on the exact SDK version return type
-    if (response.functionCalls && response.functionCalls.length > 0) {
-        const functionCall = response.functionCalls[0];
-        console.log(`Function called: ${functionCall.name}`);
-        resultData = functionCall.args;
+    const detectionData = detectionResult.data as { 
+      is_political: boolean; 
+      confidence: string; 
+      reasoning: string; 
+    };
+    
+    console.log(`Detection result: is_political=${detectionData.is_political}, confidence=${detectionData.confidence}`);
+
+    // If not political, return early with detection result
+    if (!detectionData.is_political) {
+      console.log("Content is not political. Skipping bias analysis.");
+      return new Response(
+        JSON.stringify({
+          is_political: false,
+          detection: detectionData,
+          analysis: null,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      );
+    }
+
+    // =========================================================================
+    // STEP 2: Full Political Bias Analysis (only if political)
+    // =========================================================================
+    console.log("Step 2: Content is political. Running bias analysis...");
+    
+    const analysisConfig = createModelConfig(politicalAnalysisConfig);
+    const analysisPrompt = `Please analyze the following transcript and report your findings using the 'record_political_analysis' tool.
+
+    Transcript:
+    ---
+    ${transcript}
+    ---
+    `;
+
+    const analysisResult = await executeGeminiCall(
+      ai,
+      analysisConfig.modelId,
+      analysisConfig.config,
+      analysisPrompt
+    );
+
+    let resultData;
+    if (analysisResult.success && analysisResult.data) {
+      resultData = {
+        is_political: true,
+        detection: detectionData,
+        analysis: analysisResult.data,
+      };
     } else {
-        // Fallback if the model refused to call the function
-        console.log("No function call found.");
-        resultData = { error: "Model did not trigger analysis tool", raw_text: response.text };
+      resultData = { 
+        is_political: true,
+        detection: detectionData,
+        analysis: null,
+        error: "Model did not trigger analysis tool", 
+        raw_text: analysisResult.error 
+      };
     }
 
     // 6. Return JSON response
