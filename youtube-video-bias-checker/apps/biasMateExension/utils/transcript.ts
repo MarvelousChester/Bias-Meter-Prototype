@@ -11,7 +11,7 @@ export async function getTranscript(videoId: string): Promise<TranscriptItem[] |
     const transcript = await YoutubeTranscript.fetchTranscript(videoId);
 
     if (!transcript || transcript.length === 0) {
-      return null;
+      throw new Error("Transcript is empty or null");
     }
 
     // Map library output to our interface
@@ -22,7 +22,28 @@ export async function getTranscript(videoId: string): Promise<TranscriptItem[] |
       duration: item.duration,
     }));
   } catch (error) {
-    console.error('Bias Mate: Error fetching transcript with youtube-transcript-plus', error);
-    return null;
+    console.error('Bias Mate: Error fetching transcript with youtube-transcript-plus, falling back to Python API', error);
+    
+    try {
+      const response = await fetch(`http://localhost:5328/api/python/${videoId}`);
+      if (!response.ok) {
+        console.error(`Bias Mate: Fallback Python API failed with status ${response.status}`);
+        return null;
+      }
+      
+      const data = await response.json();
+      if (data.transcript) {
+        // BiasDetector concatenates text from items, so returning a single block is sufficient
+        return [{
+          text: data.transcript,
+          start: 0,
+          duration: 0
+        }];
+      }
+      return null;
+    } catch (fallbackError) {
+      console.error('Bias Mate: Fallback Python API also failed', fallbackError);
+      return null;
+    }
   }
 }

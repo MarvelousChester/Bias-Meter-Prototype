@@ -42,7 +42,7 @@ export default function BiasDetector() {
       const transcriptText = transcript.map(item => item.text).join(" ");
       console.log("Transcript fetched, analyzing...");
       
-      const result = await analyzeTranscript(transcriptText);
+      const result = await analyzeTranscript(transcriptText, videoMetadata);
       console.log("Analysis Result:", result);
 
       setAnalysisResponse(result);

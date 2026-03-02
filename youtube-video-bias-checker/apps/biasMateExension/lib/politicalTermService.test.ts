@@ -41,9 +41,9 @@ describe("politicalTermService", () => {
   describe("fetchDefinition", () => {
     it("should return cached definition if found in Supabase", async () => {
       const mockData = {
-        Keyword: "Socialism",
-        Definition: "A political and economic theory...",
-        Link: "http://example.com",
+        term: "Socialism",
+        definition: "A political and economic theory...",
+        source_url: "http://example.com",
       };
 
       maybeSingleMock.mockResolvedValue({ data: mockData, error: null });
@@ -51,8 +51,8 @@ describe("politicalTermService", () => {
       const result = await fetchDefinition("Socialism");
 
       expect(supabase.from).toHaveBeenCalledWith("political_terms");
-      expect(selectMock).toHaveBeenCalledWith("Keyword, Definition, Link");
-      expect(ilikeMock).toHaveBeenCalledWith("Keyword", "Socialism");
+      expect(selectMock).toHaveBeenCalledWith("term, definition, source_url");
+      expect(ilikeMock).toHaveBeenCalledWith("term", "Socialism");
       expect(maybeSingleMock).toHaveBeenCalled();
       expect(result).toEqual({
         Term: "Socialism",
@@ -87,12 +87,12 @@ describe("politicalTermService", () => {
       // Check Caching
       expect(upsertMock).toHaveBeenCalledWith(
         {
-          Keyword: "Socialism",
-          Definition: "API Definition",
-          Link: "http://api.com",
+          term: "Socialism",
+          definition: "API Definition",
+          source_url: "http://api.com",
         },
         {
-          onConflict: "Keyword",
+          onConflict: "term",
           ignoreDuplicates: false,
         }
       );

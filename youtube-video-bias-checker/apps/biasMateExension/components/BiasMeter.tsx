@@ -7,11 +7,11 @@ interface BiasMeterProps {
 const BiasMeter: React.FC<BiasMeterProps> = ({ bias }) => {
   const getPosition = (bias: string) => {
     switch (bias) {
-      case 'left': return '10%';
-      case 'left-leaning': return '30%';
-      case 'center': return '50%';
-      case 'right-leaning': return '70%';
-      case 'right': return '90%';
+      case 'Left': return '10%';
+      case 'Left-leaning': return '30%';
+      case 'Center': return '50%';
+      case 'Right-leaning': return '70%';
+      case 'Right': return '90%';
       default: return '50%';
     }
   };

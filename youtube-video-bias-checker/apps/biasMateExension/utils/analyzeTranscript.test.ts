@@ -35,6 +35,13 @@ describe("analyzeTranscript", () => {
       summary_and_analysis: "This is a balanced analysis...",
     };
 
+    const mockVideoMetadata = {
+      videoId: "abc123",
+      title: "Test Video",
+      channelName: "Test Channel",
+      uploadDate: "2024-01-15",
+    };
+
     it("should return analysis data when session exists and function succeeds", async () => {
       // Setup mocks
       (supabase.auth.getSession as Mock).mockResolvedValue({
@@ -45,7 +52,7 @@ describe("analyzeTranscript", () => {
         error: null,
       });
 
-      const result = await analyzeTranscript("Sample transcript text");
+      const result = await analyzeTranscript("Sample transcript text", mockVideoMetadata);
 
       // Verify getSession was called
       expect(supabase.auth.getSession).toHaveBeenCalled();
@@ -54,7 +61,7 @@ describe("analyzeTranscript", () => {
       expect(supabase.functions.invoke).toHaveBeenCalledWith(
         "analyze-transcript-gemini",
         {
-          body: { transcript: "Sample transcript text" },
+          body: { transcript: "Sample transcript text", videoMetadata: mockVideoMetadata },
           headers: {
             Authorization: `Bearer ${mockSession.access_token}`,
           },
@@ -71,7 +78,7 @@ describe("analyzeTranscript", () => {
         data: { session: null },
       });
 
-      await expect(analyzeTranscript("Sample transcript")).rejects.toThrow(
+      await expect(analyzeTranscript("Sample transcript", mockVideoMetadata)).rejects.toThrow(
         "No active session. Please log in via the extension popup."
       );
 
@@ -89,7 +96,7 @@ describe("analyzeTranscript", () => {
         error: { message: "Internal server error" },
       });
 
-      await expect(analyzeTranscript("Sample transcript")).rejects.toThrow(
+      await expect(analyzeTranscript("Sample transcript", mockVideoMetadata)).rejects.toThrow(
         "Supabase function error: Internal server error"
       );
     });
@@ -104,7 +111,7 @@ describe("analyzeTranscript", () => {
         error: { code: "UNKNOWN_ERROR" },
       });
 
-      await expect(analyzeTranscript("Sample transcript")).rejects.toThrow(
+      await expect(analyzeTranscript("Sample transcript", mockVideoMetadata)).rejects.toThrow(
         'Supabase function error: {"code":"UNKNOWN_ERROR"}'
       );
     });
@@ -119,7 +126,7 @@ describe("analyzeTranscript", () => {
         error: null,
       });
 
-      await expect(analyzeTranscript("Sample transcript")).rejects.toThrow(
+      await expect(analyzeTranscript("Sample transcript", mockVideoMetadata)).rejects.toThrow(
         "Supabase function returned no data"
       );
     });
@@ -134,7 +141,7 @@ describe("analyzeTranscript", () => {
         error: null,
       });
 
-      await analyzeTranscript("Test transcript");
+      await analyzeTranscript("Test transcript", mockVideoMetadata);
 
       expect(supabase.functions.invoke).toHaveBeenCalledWith(
         expect.any(String),
@@ -157,12 +164,12 @@ describe("analyzeTranscript", () => {
         error: null,
       });
 
-      await analyzeTranscript(longTranscript);
+      await analyzeTranscript(longTranscript, mockVideoMetadata);
 
       expect(supabase.functions.invoke).toHaveBeenCalledWith(
         "analyze-transcript-gemini",
         expect.objectContaining({
-          body: { transcript: longTranscript },
+          body: { transcript: longTranscript, videoMetadata: mockVideoMetadata },
         })
       );
     });

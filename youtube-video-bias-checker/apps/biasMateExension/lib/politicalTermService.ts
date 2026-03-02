@@ -14,23 +14,23 @@ async function getDefinitionFromCache(
 
   const { data, error } = await supabase
     .from("political_terms")
-    .select("Keyword, Definition, Link")
-    .ilike("Keyword", normalizedKeyword)
+    .select("term, definition, source_url")
+    .ilike("term", normalizedKeyword)
     .maybeSingle();
 
   // Only return cached data if all required fields are valid non-empty strings
   if (
     !error &&
     data &&
-    typeof data.Definition === "string" &&
-    data.Definition.trim() !== "" &&
-    typeof data.Link === "string" &&
-    data.Link.trim() !== ""
+    typeof data.definition === "string" &&
+    data.definition.trim() !== "" &&
+    typeof data.source_url === "string" &&
+    data.source_url.trim() !== ""
   ) {
     return {
-      Term: data.Keyword || normalizedKeyword,
-      Definition: data.Definition,
-      Link: data.Link,
+      Term: data.term || normalizedKeyword,
+      Definition: data.definition,
+      Link: data.source_url,
     };
   }
 
@@ -47,12 +47,12 @@ async function cacheDefinition(definition: EbscoDefinition): Promise<void> {
       .from("political_terms")
       .upsert(
         {
-          Keyword: definition.Term,
-          Definition: definition.Definition,
-          Link: definition.Link || "",
+          term: definition.Term,
+          definition: definition.Definition,
+          source_url: definition.Link || "",
         },
         {
-          onConflict: "Keyword",
+          onConflict: "term",
           ignoreDuplicates: false,
         }
       );

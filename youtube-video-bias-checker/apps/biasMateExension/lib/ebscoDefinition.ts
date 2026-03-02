@@ -79,9 +79,10 @@ export async function scrapeEbscoDefinition(
   }
 
   for (const template of URL_TEMPLATES) {
+    const slug = normalizedKey.replace(/\s+/g, "-");
     const url = template.replace(
       "{keyword}",
-      encodeURIComponent(normalizedKey)
+      encodeURIComponent(slug)
     );
 
     try {

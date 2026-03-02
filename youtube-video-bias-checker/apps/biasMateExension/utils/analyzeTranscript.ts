@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
-import type { AnalysisResponse } from "@bias-mate/shared";
+import type { AnalysisResponse, VideoMetadata } from "@bias-mate/shared";
 
-export async function analyzeTranscript(transcript: string): Promise<AnalysisResponse> {
+export async function analyzeTranscript(transcript: string, videoMetadata: VideoMetadata): Promise<AnalysisResponse> {
     // Get the current session to include the auth token
     const { data: { session } } = await supabase.auth.getSession();
     
@@ -10,7 +10,7 @@ export async function analyzeTranscript(transcript: string): Promise<AnalysisRes
     }
 
     const { data, error } = await supabase.functions.invoke('analyze-transcript-gemini', {
-        body: { transcript: transcript },
+        body: { transcript, videoMetadata },
         headers: {
             Authorization: `Bearer ${session.access_token}`
         }
