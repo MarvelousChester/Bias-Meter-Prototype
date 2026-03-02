@@ -31,7 +31,7 @@ describe("analyzeTranscript", () => {
 
     const mockAnalysisResponse = {
       political_leaning: "center",
-      political_philosophies: ["liberalism", "conservatism"],
+      political_philosophies: [{ term: "liberalism" }, { term: "conservatism" }],
       summary_and_analysis: "This is a balanced analysis...",
     };
 

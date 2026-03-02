@@ -143,5 +143,23 @@ describe("politicalTermService", () => {
       expect(scrapeEbscoDefinition).toHaveBeenCalled();
       expect(result).toEqual(apiResponse);
     });
+
+    it("should apply modifier formatting to returned definition", async () => {
+      const mockData = {
+        term: "Neoliberalism",
+        definition: "A political approach...",
+        source_url: "http://example.com",
+      };
+
+      maybeSingleMock.mockResolvedValue({ data: mockData, error: null });
+
+      const result = await fetchDefinition("Neoliberalism", "anti");
+
+      expect(result).toEqual({
+        Term: "Anti-Neoliberalism",
+        Definition: "Opposition to or rejection of: A political approach...",
+        Link: "http://example.com",
+      });
+    });
   });
 });

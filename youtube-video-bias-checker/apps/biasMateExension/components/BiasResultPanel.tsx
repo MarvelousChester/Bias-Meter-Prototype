@@ -39,16 +39,22 @@ const BiasResultPanel: React.FC<BiasResultPanelProps> = ({ analysis, isLoading, 
                     Key Signals Found
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                    {analysis.political_philosophies.map((philosophy) => (
-                        <div
-                            key={philosophy}
-                            className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gray-200/80 border border-transparent hover:border-border-muted transition-colors"
-                        >
-                            <p className="text-text-primary text-sm font-medium leading-normal">
-                                {philosophy}
-                            </p>
-                        </div>
-                    ))}
+                    {analysis.political_philosophies.map((philosophy) => {
+                        const displayText = philosophy.modifier 
+                            ? `${philosophy.modifier.charAt(0).toUpperCase() + philosophy.modifier.slice(1)}-${philosophy.term}` 
+                            : philosophy.term;
+
+                        return (
+                            <div
+                                key={displayText}
+                                className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gray-200/80 border border-transparent hover:border-border-muted transition-colors"
+                            >
+                                <p className="text-text-primary text-sm font-medium leading-normal">
+                                    {displayText}
+                                </p>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 

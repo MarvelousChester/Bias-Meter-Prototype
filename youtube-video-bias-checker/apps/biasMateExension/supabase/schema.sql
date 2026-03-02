@@ -47,7 +47,7 @@ CREATE TYPE "public"."term_modifier_enum" AS ENUM (
 ALTER TYPE "public"."term_modifier_enum" OWNER TO "postgres";
 
 
-CREATE OR REPLACE FUNCTION "public"."get_analysis_terms"("p_analysis_id" "uuid") RETURNS TABLE("term" "text", "definition" "text", "source_url" "text", "modifier" "public"."term_modifier_enum", "display_term" "text")
+CREATE OR REPLACE FUNCTION "public"."get_analysis_terms"("p_video_id" character varying) RETURNS TABLE("term" "text", "definition" "text", "source_url" "text", "modifier" "public"."term_modifier_enum", "display_term" "text")
     LANGUAGE "plpgsql" STABLE
     AS $$
 BEGIN
@@ -68,13 +68,13 @@ BEGIN
         END AS display_term
     FROM political_analysis_terms pat
     JOIN political_terms pt ON pt.id = pat.term_id
-    WHERE pat.analysis_id = p_analysis_id
+    WHERE pat.video_id = p_video_id
     ORDER BY pt.term;
 END;
 $$;
 
 
-ALTER FUNCTION "public"."get_analysis_terms"("p_analysis_id" "uuid") OWNER TO "postgres";
+ALTER FUNCTION "public"."get_analysis_terms"("p_video_id" character varying) OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."get_modified_definition"("p_definition" "text", "p_modifier" "public"."term_modifier_enum") RETURNS "text"
@@ -114,7 +114,6 @@ SET default_table_access_method = "heap";
 
 
 CREATE TABLE IF NOT EXISTS "public"."political_analysis" (
-    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "video_id" character varying(11) NOT NULL,
     "political_leaning" "public"."political_leaning_enum" NOT NULL,
     "summary_and_analysis" "text" NOT NULL,
@@ -127,7 +126,7 @@ ALTER TABLE "public"."political_analysis" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."political_analysis_terms" (
-    "analysis_id" "uuid" NOT NULL,
+    "video_id" character varying(11) NOT NULL,
     "term_id" bigint NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"(),
     "modifier" "public"."term_modifier_enum"
@@ -186,12 +185,12 @@ ALTER TABLE "public"."video_metadata" OWNER TO "postgres";
 
 
 ALTER TABLE ONLY "public"."political_analysis"
-    ADD CONSTRAINT "political_analysis_pkey" PRIMARY KEY ("id");
+    ADD CONSTRAINT "political_analysis_pkey" PRIMARY KEY ("video_id");
 
 
 
 ALTER TABLE ONLY "public"."political_analysis_terms"
-    ADD CONSTRAINT "political_analysis_terms_pkey" PRIMARY KEY ("analysis_id", "term_id");
+    ADD CONSTRAINT "political_analysis_terms_pkey" PRIMARY KEY ("video_id", "term_id");
 
 
 
@@ -250,7 +249,7 @@ CREATE OR REPLACE TRIGGER "update_video_metadata_updated_at" BEFORE UPDATE ON "p
 
 
 ALTER TABLE ONLY "public"."political_analysis_terms"
-    ADD CONSTRAINT "political_analysis_terms_analysis_id_fkey" FOREIGN KEY ("analysis_id") REFERENCES "public"."political_analysis"("id") ON DELETE CASCADE;
+    ADD CONSTRAINT "political_analysis_terms_video_id_fkey" FOREIGN KEY ("video_id") REFERENCES "public"."political_analysis"("video_id") ON DELETE CASCADE;
 
 
 
@@ -311,9 +310,9 @@ GRANT USAGE ON SCHEMA "public" TO "service_role";
 
 
 
-GRANT ALL ON FUNCTION "public"."get_analysis_terms"("p_analysis_id" "uuid") TO "anon";
-GRANT ALL ON FUNCTION "public"."get_analysis_terms"("p_analysis_id" "uuid") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."get_analysis_terms"("p_analysis_id" "uuid") TO "service_role";
+GRANT ALL ON FUNCTION "public"."get_analysis_terms"("p_video_id" character varying) TO "anon";
+GRANT ALL ON FUNCTION "public"."get_analysis_terms"("p_video_id" character varying) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_analysis_terms"("p_video_id" character varying) TO "service_role";
 
 
 

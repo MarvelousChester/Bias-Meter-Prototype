@@ -9,9 +9,16 @@ export type PoliticalLeaning =
   | 'Right-leaning'
   | 'Right';
 
+export type TermModifier = 'pro' | 'anti' | 'neo' | 'post' | 'proto';
+
+export interface PoliticalPhilosophy {
+  term: string;
+  modifier?: TermModifier;
+}
+
 export interface PoliticalAnalysis {
   political_leaning: PoliticalLeaning;
-  political_philosophies: string[];
+  political_philosophies: PoliticalPhilosophy[];
   summary_and_analysis: string;
 }
 

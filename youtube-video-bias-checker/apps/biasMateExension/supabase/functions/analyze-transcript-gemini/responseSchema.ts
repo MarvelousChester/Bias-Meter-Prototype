@@ -17,7 +17,19 @@ export const politicalAnalysisSchema = {
       description:
         "A list of the primary political philosophies or ideologies (e.g., Conservatism, Progressivism) identified in the text.",
       items: {
-        type: Type.STRING,
+        type: Type.OBJECT,
+        properties: {
+          term: {
+            type: Type.STRING,
+            description: "The root political philosophy or ideology (e.g., 'Neoliberalism')."
+          },
+          modifier: {
+            type: Type.STRING,
+            enum: ['pro', 'anti', 'neo', 'post', 'proto'],
+            description: "Optional modifier for the philosophy. Leave empty if none."
+          }
+        },
+        required: ["term"]
       },
     },
     summary_and_analysis: {

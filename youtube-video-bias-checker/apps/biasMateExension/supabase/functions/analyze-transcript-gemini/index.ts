@@ -15,6 +15,7 @@ const EBSCO_URL_TEMPLATES = [
   "https://www.ebsco.com/research-starters/political-science/{keyword}",
   "https://www.ebsco.com/research-starters/history/{keyword}",
   "https://www.ebsco.com/research-starters/psychology/{keyword}",
+  "https://www.ebsco.com/research-starters/literature-and-writing/{keyword}",
 ];
 
 const EBSCO_USER_AGENT =
@@ -26,10 +27,8 @@ async function fetchEbscoDefinition(
   keyword: string
 ): Promise<{ term: string; definition: string; source_url: string } | null> {
   const normalizedKey = keyword.trim().toLowerCase();
+  if (!normalizedKey) return null;
   const slug = normalizedKey.replace(/\s+/g, "-");
-
-  if (!slug) return null;
-
   for (const template of EBSCO_URL_TEMPLATES) {
     const url = template.replace("{keyword}", encodeURIComponent(slug));
 
@@ -107,7 +106,7 @@ interface VideoMetadataInput {
 
 interface AnalysisData {
   political_leaning: string;
-  political_philosophies: string[];
+  political_philosophies: { term: string; modifier?: string }[];
   summary_and_analysis: string;
 }
 
@@ -149,25 +148,27 @@ async function persistAnalysisResults(
 
     const { data: analysisRow, error: analysisError } = await serviceClient
       .from("political_analysis")
-      .insert({
+      .upsert({
         video_id: videoMetadata.videoId,
         political_leaning: dbLeaning,
         summary_and_analysis: analysisData.summary_and_analysis,
-      })
-      .select("id")
+      }, { onConflict: "video_id" })
+      .select("video_id")
       .single();
 
     if (analysisError || !analysisRow) {
-      console.error("Failed to insert political_analysis:", analysisError);
+      console.error("Failed to upsert political_analysis:", analysisError);
       return;
     }
-    const analysisId = analysisRow.id;
-    console.log(`Inserted political_analysis with id: ${analysisId}`);
+    const analysisVideoId = analysisRow.video_id;
+    console.log(`Upserted political_analysis for video_id: ${analysisVideoId}`);
 
     // 3. For each political philosophy, look up or create the term, then link it
     if (!analysisData.political_philosophies?.length) return;
 
-    for (const philosophy of analysisData.political_philosophies) {
+    for (const philosophyObj of analysisData.political_philosophies) {
+      const philosophy = philosophyObj.term;
+      const modifier = philosophyObj.modifier || null;
       try {
         // Try to find the term in political_terms (case-insensitive)
         const { data: existingTerm, error: lookupError } = await serviceClient
@@ -208,13 +209,14 @@ async function persistAnalysisResults(
           console.log(`Inserted new political_term "${philosophy}" with id: ${termId}`);
         }
 
-        // 4. Insert into political_analysis_terms junction table
+        // 4. Upsert into political_analysis_terms junction table
         const { error: junctionError } = await serviceClient
           .from("political_analysis_terms")
-          .insert({
-            analysis_id: analysisId,
+          .upsert({
+            video_id: analysisVideoId,
             term_id: termId,
-          });
+            modifier: modifier,
+          }, { onConflict: "video_id, term_id" });
 
         if (junctionError) {
           console.error(`Failed to link term "${philosophy}" to analysis:`, junctionError);

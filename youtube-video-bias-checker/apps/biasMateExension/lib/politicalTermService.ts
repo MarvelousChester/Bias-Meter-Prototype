@@ -69,35 +69,73 @@ async function cacheDefinition(definition: EbscoDefinition): Promise<void> {
  * Fetch definition with caching strategy
  * First checks database cache, then falls back to the HTML scraper if not found
  * @param keyword - The political term to look up
+ * @param modifier - Optional modifier (e.g. anti, pro, neo)
  * @returns Definition object with Term, Definition and Link
  */
 export async function fetchDefinition(
-  keyword: string
+  keyword: string,
+  modifier?: "pro" | "anti" | "neo" | "post" | "proto"
 ): Promise<EbscoDefinition> {
   // Try to get from cache first
-  const cachedDefinition = await getDefinitionFromCache(keyword);
-  if (cachedDefinition) {
-    return cachedDefinition;
+  let definition = await getDefinitionFromCache(keyword);
+
+  if (!definition) {
+    try {
+      definition = await scrapeEbscoDefinition(keyword);
+
+      if (
+        !definition ||
+        typeof definition.Definition !== "string" ||
+        definition.Definition.trim() === "" ||
+        typeof definition.Link !== "string"
+      ) {
+        throw new Error("Invalid response shape");
+      }
+
+      // Cache the result for future requests
+      await cacheDefinition(definition);
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : "Unknown error";
+      throw new Error(`Scraper Failed: ${reason}`);
+    }
   }
 
-  try {
-    const definition = await scrapeEbscoDefinition(keyword);
-
-    if (
-      !definition ||
-      typeof definition.Definition !== "string" ||
-      definition.Definition.trim() === "" ||
-      typeof definition.Link !== "string"
-    ) {
-      throw new Error("Invalid response shape");
+  // Apply modifier logic
+  if (modifier) {
+    let prefix = "";
+    let capitalizedPrefix = "";
+    
+    switch (modifier) {
+      case "anti":
+        prefix = "Opposition to or rejection of: ";
+        capitalizedPrefix = "Anti-";
+        break;
+      case "pro":
+        prefix = "Advocacy or support for: ";
+        capitalizedPrefix = "Pro-";
+        break;
+      case "neo":
+        prefix = "A modern revival or reinterpretation of: ";
+        capitalizedPrefix = "Neo-";
+        break;
+      case "post":
+        prefix = "A perspective that moves beyond or after: ";
+        capitalizedPrefix = "Post-";
+        break;
+      case "proto":
+        prefix = "An early or foundational form of: ";
+        capitalizedPrefix = "Proto-";
+        break;
     }
 
-    // Cache the result for future requests
-    await cacheDefinition(definition);
-
-    return definition;
-  } catch (err) {
-    const reason = err instanceof Error ? err.message : "Unknown error";
-    throw new Error(`Scraper Failed: ${reason}`);
+    if (prefix) {
+      definition = {
+        ...definition,
+        Term: `${capitalizedPrefix}${definition.Term}`,
+        Definition: `${prefix}${definition.Definition}`
+      };
+    }
   }
+
+  return definition;
 }

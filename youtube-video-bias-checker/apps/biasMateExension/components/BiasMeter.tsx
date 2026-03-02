@@ -1,7 +1,8 @@
 import React from 'react';
+import type { PoliticalLeaning } from '@bias-mate/shared';
 
 interface BiasMeterProps {
-  bias: 'left' | 'left-leaning' | 'center' | 'right-leaning' | 'right';
+  bias: PoliticalLeaning;
 }
 
 const BiasMeter: React.FC<BiasMeterProps> = ({ bias }) => {
