@@ -8,12 +8,12 @@ This is a monorepo containing a WXT-based browser extension (React/Tailwind) and
 
 <table>
   <tr>
-    <td><img src="./@imgs/example1.png" alt="Extension Popup" width="400"/></td>
-    <td><img src="./@imgs/example2.png" alt="Analyzing Video" width="400"/></td>
+    <td><img src="./imgs/CenterBiasDetection.png" alt="Center Bias Detection" width="400"/></td>
+    <td><img src="./imgs/LeaningRightDetection.png" alt="Leaning Right Detection" width="400"/></td>
   </tr>
   <tr>
-    <td><img src="./@imgs/example3.png" alt="Definitions Tooltip" width="400"/></td>
-    <td><img src="./@imgs/example4.png" alt="Backend Terminal" width="400"/></td>
+    <td><img src="./imgs/LeftLeaningDetection.png" alt="Left Leaning Detection" width="400"/></td>
+    <td><img src="./imgs/RightBiasDetection.png" alt="Right Bias Detection" width="400"/></td>
   </tr>
 </table>
 
